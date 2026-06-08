@@ -19,6 +19,6 @@ postsRouter.put("/:slug", [validateCP, checkId, postsController.update]);
 
 postsRouter.patch("/:slug", [validateU, checkId,  postsController.modify]);
 
-postsRouter.delete("/:slug", [checkId ,postsController.destroy]);
+postsRouter.delete("/:id", [checkId ,postsController.destroy]);
 
 export default postsRouter;

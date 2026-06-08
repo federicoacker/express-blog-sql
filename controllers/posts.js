@@ -1,6 +1,6 @@
 import { posts, validatePostAndPut, filterPosts, createPostSlug, getCreationTime, validatePatch } from "../data/posts.js";
 import connection from "../data/db.js";
-import { fetchAllPosts, fetchPostByID } from "../utils/dbFunctions.js";
+import { deletePostByID, fetchAllPosts, fetchPostByID } from "../utils/dbFunctions.js";
 
 const postsController = {
     index,
@@ -114,9 +114,8 @@ function modify(request, response) {
     })
 }
 
-function destroy(request, response) {
-    const foundPostIndex = request.foundPostIndex
-    posts.splice(foundPostIndex, 1);
+async function destroy(request, response) {
+    const results = await deletePostByID(request.id);
     response.sendStatus(204);
 }
 

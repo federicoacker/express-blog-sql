@@ -51,6 +51,21 @@ async function fetchPostByID(id) {
     
 }
 
+async function deletePostByID(id){
+    const queryDelete = `
+    DELETE FROM posts as p
+    WHERE p.id = ?;
+    `
+    const queryDeleteFromBridge = `
+    DELETE FROM post_tag as pt
+    WHERE pt.post_id = ?
+    `
+
+    const results = await connection.execute(queryDelete, [id]);
+    const bridgeResults = await connection.execute(queryDeleteFromBridge,[id])
+}
+
 export {
     fetchAllPosts,
-    fetchPostByID};
+    fetchPostByID,
+    deletePostByID};
