@@ -1,5 +1,47 @@
 import connection from "../data/db.js";
 
+async function linkPostWithTags(postId, tagId){
+    const queryLink = `
+    INSERT INTO post_tag(post_id, tag_id)
+    VALUES (?, ?)
+    `;
+
+    const results = await connection.execute(queryLink, [postId, tagId]);
+    return results[0];
+}
+
+async function createNewPost(post){
+    const {title, content, image} = post;
+    const queryCreatePost = `
+    INSERT INTO posts(title, content, image)
+    VALUES (?, ?, ?)
+    `;
+    const results = await connection.execute(queryCreatePost, [title, content, image]);
+    return results[0].insertId;
+}
+
+async function createNewTag(tag){
+    
+    const queryCreateTag = `
+    INSERT INTO tags (label)
+    VALUES (?)
+    `;
+
+    const results = await connection.execute(queryCreateTag, [tag]);
+    return results[0].insertId;
+}
+
+async function fetchAllTags(){
+    const querySelect = `
+    SELECT t.label, t.id
+    FROM tags t
+    WHERE 1;
+    `
+
+    const results = await connection.query(querySelect);
+    return results[0].map(tag => {return {label:tag.label, id:tag.id}});
+}
+
 async function fetchAllPosts() {
     const querySelect = `
         SELECT p.title, p.content, p.image, p.id
@@ -56,16 +98,14 @@ async function deletePostByID(id){
     DELETE FROM posts as p
     WHERE p.id = ?;
     `
-    const queryDeleteFromBridge = `
-    DELETE FROM post_tag as pt
-    WHERE pt.post_id = ?
-    `
-
     const results = await connection.execute(queryDelete, [id]);
-    const bridgeResults = await connection.execute(queryDeleteFromBridge,[id])
 }
 
 export {
     fetchAllPosts,
     fetchPostByID,
-    deletePostByID};
+    deletePostByID,
+    fetchAllTags,
+    createNewTag,
+    createNewPost,
+    linkPostWithTags};

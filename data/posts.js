@@ -68,9 +68,7 @@ const templatePostToBeCreated = {
   title: "",
   content: "",
   image: "",
-  tags: [],
-  published: false,
-  prep_time: 0
+  tags: []
 }
 
 function createPostSlug(post) {
@@ -177,16 +175,6 @@ function switchValidator(key, value) {
         if (typeof current !== "string") {
           return false;
         }
-      }
-      break;
-    case "published":
-      if (typeof value !== "boolean") {
-        return false;
-      }
-      break;
-    case "prep_time":
-      if (typeof value !== "number") {
-        return false;
       }
       break;
     default:

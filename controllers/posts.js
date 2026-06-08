@@ -1,6 +1,6 @@
 import { posts, validatePostAndPut, filterPosts, createPostSlug, getCreationTime, validatePatch } from "../data/posts.js";
 import connection from "../data/db.js";
-import { deletePostByID, fetchAllPosts, fetchPostByID } from "../utils/dbFunctions.js";
+import { createNewPost, createNewTag, deletePostByID, fetchAllPosts, fetchAllTags, fetchPostByID, linkPostWithTags } from "../utils/dbFunctions.js";
 
 const postsController = {
     index,
@@ -51,22 +51,31 @@ async function show(request, response) {
 
 }
 
-function store(request, response) {
+async function store(request, response) {
 
     const validatedPost = request.validatedPost;
-    const newPost = ({
-        ...validatedPost,
-        id: posts.length + 1,
-        created_at: getCreationTime()
-    });
+    const tags = await fetchAllTags();
+    const validatedPostTags = validatedPost.tags;
+    let tagResults = [];
+    let postResult = 0;
 
-    newPost.slug = createPostSlug(newPost);
+    for(const tag of validatedPostTags){
+        let tagResult = tags.find(dbTag => dbTag.label.toLowerCase() === tag.toLowerCase())?.id;
+        if(!tagResult){
+            tagResult = await createNewTag(tag);
+        }
+        tagResults.push(tagResult);
+    }
 
-    posts.push(newPost);
-
+    postResult = await createNewPost(validatedPost);
+    
+    for (let i = 0; i < tagResults.length; i++){
+        const linkingResult = await linkPostWithTags(postResult, tagResults[i]);
+    }
+    
     response.status(201).json({
         error: null,
-        result: newPost
+        result: await fetchPostByID(postResult)
     })
 }
 
