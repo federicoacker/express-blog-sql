@@ -13,7 +13,7 @@ async function fetchAllPosts() {
     JOIN post_tag pt
     ON t.id = pt.tag_id
     WHERE pt.post_id = ?;
-    `
+    `;
     const results = await connection.query(querySelect);
     const tags = [];
 
@@ -25,4 +25,32 @@ async function fetchAllPosts() {
     return results[0];
 }
 
-export {fetchAllPosts};
+async function fetchPostByID(id) {
+    const querySelect = `
+    SELECT p.title, p.content, p.image, p.id
+    FROM posts p
+    WHERE p.id = ?;
+    `;
+    
+    const querySelectTags = `
+    SELECT t.label 
+    FROM tags t
+    JOIN post_tag pt
+    ON t.id = pt.tag_id
+    WHERE pt.post_id = ?;
+    `
+    const results = await connection.execute(querySelect, [id]);
+    const tags = [];
+
+    for(let i=0 ; i < results[0].length; i++){
+        const currentTags = await connection.execute(querySelectTags, [results[0][i].id]);
+        results[0][i].tags = (currentTags[0].map(tag => tag.label));
+    }
+
+    return results[0];
+    
+}
+
+export {
+    fetchAllPosts,
+    fetchPostByID};

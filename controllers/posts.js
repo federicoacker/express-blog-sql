@@ -1,6 +1,6 @@
 import { posts, validatePostAndPut, filterPosts, createPostSlug, getCreationTime, validatePatch } from "../data/posts.js";
 import connection from "../data/db.js";
-import { fetchAllPosts } from "../utils/dbFunctions.js";
+import { fetchAllPosts, fetchPostByID } from "../utils/dbFunctions.js";
 
 const postsController = {
     index,
@@ -33,12 +33,20 @@ async function index(request, response) {
 
 }
 
-function show(request, response) {
-    const foundPost = request.results;
+async function show(request, response) {
+    const foundPost = await fetchPostByID(request.id);
+    if(foundPost.length === 0){
+        return response.status(404).json({
+            error: "Nessun post trovato a quell'id",
+            result: null
+        });
+    }
+
+    const {id, ...remaining} = foundPost[0];
 
     response.json({
         error: null,
-        result: foundPost
+        result: [remaining] // messo l'array per mantenere coerenza con la index che restituisce un array
     })
 
 }

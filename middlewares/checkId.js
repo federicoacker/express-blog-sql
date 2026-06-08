@@ -1,6 +1,5 @@
-import { posts } from "../data/posts.js";
 
-function fetchPost(request, response, next){
+function checkId(request, response, next){
     const id = request.params.id;
     const idReal = parseInt(id);
     if(isNaN(idReal)){
@@ -14,4 +13,4 @@ function fetchPost(request, response, next){
     next();
 }
 
-export default fetchPost;
+export default checkId;
