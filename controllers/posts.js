@@ -1,4 +1,6 @@
 import { posts, validatePostAndPut, filterPosts, createPostSlug, getCreationTime, validatePatch } from "../data/posts.js";
+import connection from "../data/db.js";
+import { fetchAllPosts } from "../utils/dbFunctions.js";
 
 const postsController = {
     index,
@@ -9,35 +11,34 @@ const postsController = {
     destroy
 }
 
-function index(request, response) {
-    const filteredPosts = filterPosts(request.query);
+async function index(request, response) {
+    const results = await fetchAllPosts();
 
-    if(filteredPosts.length === 0){
+    if(results.length === 0){
         return response.status(404).json({
-            error: "Non abbiamo post che rispettino le tue query",
-            result: []
+            error: "Non sono stati trovati post",
+            result: null
         });
     }
+    const output = results.map(result => {
+        const {id, ...remaining} = result;
+        return remaining;
+    })
     response.json(
         {
             error: null,
-            result: filteredPosts.map(post => {
-                const {id, created_at, ...remaining} = post;
-                return remaining;
-            })
+            result: output
         }
     )
 
 }
 
 function show(request, response) {
-    const foundPost = request.foundPost;
-
-    const {id, created_at, ...remaining} = foundPost;
+    const foundPost = request.results;
 
     response.json({
         error: null,
-        result: remaining
+        result: foundPost
     })
 
 }

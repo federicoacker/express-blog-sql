@@ -223,29 +223,13 @@ function validatePatch(modification) {
 }
 
 function filterPosts(query) {
-  const { title, tags, slug, prep_time, published } = query || {};
+  const { title, tags } = query || {};
 
   const filteredPosts = posts.filter(post => {
-    if (typeof published === "boolean" && !published) {
-      return false;
-    }
     if (title) {
       const postTitle = post.title.toLowerCase();
       const searchTitle = title.toLowerCase();
       if (!postTitle.startsWith(searchTitle)) {
-        return false;
-      }
-    }
-    if (slug) {
-      const postSlug = post.slug.toLowerCase();
-      const searchSlug = slug.toLowerCase();
-      if (!postSlug.startsWith(searchSlug)) {
-        return false;
-      }
-    }
-    if (prep_time) {
-      const postPrepTime = post.prep_time;
-      if (prep_time > postPrepTime) {
         return false;
       }
     }

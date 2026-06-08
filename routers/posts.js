@@ -11,7 +11,7 @@ postsRouter.use(express.json());
 
 postsRouter.get("/", postsController.index);
 
-postsRouter.get("/:slug", [fetchPost, postsController.show]);
+postsRouter.get("/:id", [fetchPost, postsController.show]);
 
 postsRouter.post("/", [validateCP, postsController.store]);
 

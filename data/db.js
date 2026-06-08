@@ -8,4 +8,4 @@ const connection = await createConnection({
     database: process.env.DATABASE_DB
 });
 
-console.log(connection);
+export default connection;
