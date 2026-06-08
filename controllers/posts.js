@@ -115,6 +115,14 @@ function modify(request, response) {
 }
 
 async function destroy(request, response) {
+    const foundPost = await fetchPostByID(request.id);
+    if(foundPost.length === 0){
+        return response.status(404).json({
+            error: "Nessun post trovato a quell'id",
+            result: null
+        });
+    }
+
     const results = await deletePostByID(request.id);
     response.sendStatus(204);
 }
